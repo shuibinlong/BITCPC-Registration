@@ -26,7 +26,7 @@ def team_number_zg(): return len(Team.objects.filter(match_zone='ZG'))
 
 
 def team_number_single(): return len(
-    [x for x in Team.objects.all() if x.is_single_student_team()])
+    [x for x in Team.objects.all() if x.is_new_student_team()])
 
 
 def calc_email(email):
@@ -114,16 +114,11 @@ def register(request):
             team_limit_single = Setting.objects.get(
                 pk=1).single_person_team_limited
 
-            cnt = 0
-            for member in member_info:
-                if member.id:
-                    cnt += 1
-
-            if team_number_lx() >= team_limit_lx:
+            if team_number_lx() > team_limit_lx:
                 return render(request, 'userapp/message.html', {'message': '良乡队伍已满。', 'redirect_url': reverse_lazy('register')})
             if team_number_zg() > team_limit_zg:
                 return render(request, 'userapp/message.html', {'message': '中关村队伍已满。', 'redirect_url': reverse_lazy('register')})
-            if cnt == 1 or team_number_single() > team_limit_single:
+            if team_number_single() > team_limit_single:
                 return render(request, 'userapp/message.html', {'message': '单人队伍已满。', 'redirect_url': reverse_lazy('register')})
 
             team_id = 'L' if match_zone == 'LX' else 'Z'
@@ -218,6 +213,10 @@ def team_post(request):
         team = Team.objects.get(email=username)
         if password and password == password_veri:
             user.set_password(password)
+        
+        team_name = request.POST.get("team-name", "")
+        if team_name:
+            team.name = team_name
 
         captain_phone = request.POST.get("captain-phone", "")
         if captain_phone:
