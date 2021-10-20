@@ -1,0 +1,9 @@
+{% extends "admin/change_list.html" %}
+{% block object-tools-items %}
+
+    {{ block.super }}
+    <li>
+        <a href="export/" class="grp-state-focus">导出所有队伍信息</a>
+    </li>
+
+{% endblock %}

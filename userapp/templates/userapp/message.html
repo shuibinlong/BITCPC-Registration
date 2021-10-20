@@ -1,0 +1,16 @@
+{% extends "base.html" %} {% load static %} {% block content %} 
+<div class="container" style="margin-top:60px;">
+    <hr class="colorgraph">
+    <h3>{{ message|escape }}</h3>
+    <hr class="colorgraph">
+</div>
+
+{% if redirect_url %}
+    <script>
+        window.setTimeout(
+            function(){
+                window.location.href = "{{ redirect_url }}";}
+            , 5000);
+    </script>
+{% endif %}
+{% endblock content %}

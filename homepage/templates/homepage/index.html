@@ -1,0 +1,136 @@
+{% extends "base.html" %} 
+{% load static %}
+{% block title %} {{ top_title }} {% endblock %} 
+
+{% block content %}
+<a name="homepage"></a>
+<div class="intro-header">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="intro-message">
+                    <h1>{{ homepage.title|safe }}</h1>
+                    <hr class="intro-divider">
+                    <h3>{{ homepage.description|safe }}</h3>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</div>
+<!-- /.intro-header -->
+
+<!-- Page Content -->
+
+<a name="notice"></a>
+<div class="content-section-a">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5 col-sm-6">
+                <hr class="section-heading-spacer">
+                <div class="clearfix"></div>
+                <h2 class="section-heading">通知公告</h2>
+                <div class="lead">
+                    {% if latest_notice_list %}
+                    <ul class="notice-ul">
+                        {% for notice in latest_notice_list %}
+                        <li>
+                            <a href="/notice/{{ notice.id }}">{{ notice.title }}</a> ({{ notice.pub_date | date:"Y-m-d"}})
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>没有可用的通知。</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-5 col-lg-offset-2 col-sm-6">
+                <img class="img-responsive" src={% static "homepage/img/notice.png" %} alt="">
+            </div>
+        </div>
+
+    </div>
+    <!-- /.container -->
+
+</div>
+<!-- /.content-section-a -->
+
+<a name="special-thanks"></a>
+<div class="content-section-b">
+
+    <div class="container">
+
+        <div class="row">
+           <!-- <div class="col-lg-5 col-lg-offset-1 col-sm-push-6 col-sm-6">-->
+                <div>
+		<hr class="section-heading-spacer">
+                <div class="clearfix"></div>
+                <h2 class="section-heading">特别鸣谢：连山科技</h2>
+                <p class="lead"> <a href="http://www.lssec.cn">北京连山科技股份有限公司</a>成立于2006年，是中关村高新技术企业、国家需要重点扶持的高新技术企业，双软认证企业，中国保密协会会员单位，国家密码局定点生产销售单位，是北京创新型产业集群和“2025”示范区重点项目单位，国家“十三五”规划课题承研单位。
+                </p>
+            </div>
+            
+        </div>
+
+    </div>
+    <!-- /.container -->
+
+</div>
+<!-- /.content-section-b -->
+{% if slide_images %}
+<div class="content-section-a">
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-xs-8 col-sm-4">
+                <div class="clearfix"></div>
+                <h2 class="section-heading">历年比赛回顾</h2>
+            </div>
+            <div class="col-xs-12 col-sm-8">
+                <div id="carousel-images" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators -->
+
+                    <ol class="carousel-indicators">
+                        {% for _ in slide_images %}
+                        <li data-target="#carousel-images" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %} class="active" {% endif %}>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner" role="listbox">
+                        {% for image in slide_images %} {% if forloop.first %}
+                        <div class="item active">
+                            {% else %}
+                            <div class="item">
+                                {% endif %}
+                                <img src={% static image.image.url %} alt="slide">
+                                <div class="carousel-caption">
+                                    {{ image.title }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <!-- Controls -->
+                        <a class="left carousel-control" href="#carousel-images" role="button" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href="#carousel-images" role="button" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        {% endif %}
+        <!-- /.container -->
+
+    </div>
+    <!-- /.content-section-a -->
+{% endblock %}

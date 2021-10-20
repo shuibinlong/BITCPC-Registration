@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+
+<div class="container">
+    <div class="page-header">
+        <h2 class="notice_title">{{ notice.title }}</h2>
+    </div>
+
+    <div class="author">
+        <font color="#FF0000"> 作者：</font>
+        <font color="#0000FF" style="margin-right:10px;"> {{ notice.author }}</font>
+        <font color="#FF0000"> 发布日期：</font>
+        <font color="#0000FF"> {{ notice.pub_date }}</font>
+    </div>
+    <div>
+        {{ notice.content|safe }}
+    </div>
+
+    <hr class="notice-divider">
+    <div class="notice-footer">
+        <h4 style="color:#004e98;">相关附件:</h4>
+        {% for file in files %}
+            <li><a href={% static file.file.url %}> {{ file.filename }}</a></li>
+        {% empty %}
+            <li>不存在附件。</li>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block custom_css %}
+<link href="{% static 'css/notice.css' %}" rel="stylesheet">
+{% endblock %}

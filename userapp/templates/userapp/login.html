@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% load static %} {% block content %} 
+<div class="container">
+	<div class="row" style="margin-top:60px;">
+		<div class="col-md-4 col-md-offset-4">
+			<form method="POST" action="{% url 'login' %}" accept-charset="UTF-8" role="form" id="loginform" <fieldset>
+				<h3 class="sign-up-title" style="color:dimgray; text-align: center">欢迎回来! 请登录</h3>
+				{% csrf_token %}
+				<hr class="colorgraph">
+				<input class="form-control email-title" placeholder="队长 E-mail" name="captain-email" type="text" autocomplete="off">
+				<input class="form-control" placeholder="密码" name="password" type="password" value="" autocomplete="off">
+				<hr class="colorgraph">
+				<input class="btn btn-lg btn-success btn-block" type="submit" value="Login">
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+<script>
+	function validateEmail(email) {
+		var re =
+			/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		return re.test(email);
+	}
+
+	$('form').submit(function () {
+		// Get the Login Name value and trim it
+		var email = $.trim($("[name='captain-email']").val());
+		// Check if empty of not
+		if (!validateEmail(email)) {
+			alert('Email字段不合法。');
+			return false;
+		}
+	});
+</script>
+{% endblock content %}

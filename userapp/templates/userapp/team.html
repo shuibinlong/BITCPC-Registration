@@ -1,0 +1,316 @@
+{% extends "base.html" %} {% load static %}
+{% block content %} 
+<div class="container" style="margin-top:60px;">
+	<form class="form-horizontal" method="POST" action="{% url 'team_post' %}" accept-charset="UTF-8" role="form"
+		id="loginform">
+		<fieldset>
+			<div class="row">
+				<div class="col-md-offset-1 col-md-10">
+					<hr class="colorgraph">
+					<h3>{{ message|escape }}</h3>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">队伍信息</h3>
+						</div>
+						<div class="panel-body">
+							{% csrf_token %}
+							<div class="form-group">
+								<label class="col-xs-2 control-label">队长邮箱</label>
+								<div class="col-sm-10">
+									<input type="email" class="form-control" name="captain-email" id="captain-email"
+										value="{{ team.email }}" readonly>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="team-name" class="control-label col-sm-2">队伍名称</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control col-sm-10" name="team-name"
+										value="{{ team.name }}" maxlength="50" readonly>
+								</div>
+							</div>
+
+							<!-- <div class="form-group">
+								<label for="team-name" class="control-label col-sm-2">英文队名</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control col-sm-10" name="team-english-name"
+										value="{{ team.english_name }}" maxlength="50" readonly>
+								</div>
+							</div> -->
+
+							<div class="form-group">
+								<label for="team-name" class="control-label col-sm-2">队伍ID</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control col-sm-10" name="team-id"
+										value="{{ team.team_id }}" maxlength="25" readonly>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="team-name" class="control-label col-sm-2">密码</label>
+								<div class="col-sm-10">
+									<input type="password" class="form-control col-sm-10" name="password">
+								</div>
+							</div>
+
+							<div class="form-group" id="password-veri">
+								<label for="team-name" class="control-label col-sm-2">确认密码</label>
+								<div class="col-sm-10">
+									<input type="password" class="form-control col-sm-10" name="password-veri">
+									<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+										style="display:none;padding-right: 30px;">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="captain-phone" class="control-label col-sm-2">队长电话</label>
+								<div class="col-sm-10">
+									<input type="tel" class="form-control col-sm-10" name="captain-phone" maxlength="11"
+										value="{{ team.phone_number }}">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-sm-2">参赛校区</label>
+								<div class="col-sm-10">
+									<label class="radio-inline"><input type="radio" name="match-zone" value="ZG"
+											{% if team.match_zone == "ZG" %} checked {% else %} disabled
+											{% endif %}>中关村校区</label>
+									<label class="radio-inline"><input type="radio" name="match-zone" value="LX"
+											{% if team.match_zone == "LX" %} checked {% else %} disabled
+											{% endif %}>良乡校区</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-offset-1 col-md-10">
+					<div class="panel panel-default">
+						<h3 class="panel-title">
+							队员信息（全部队员，包括队长）
+							<a href="/size" target="_blank"><span style="font-size: 0.5em; color: blue; "><u>尺码信息表</u></span></a>
+						</h3>
+						<div class="panel-body" id="member-info">
+							{% for member in members %}
+							<div>
+								<div class="col-sm-2">
+									<input type="number" class="form-control" name="student-id-{{ forloop.counter0 }}"
+										placeholder="学号" value="{{ member.student_id }}">
+								</div>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="student-name-{{ forloop.counter0 }}"
+										placeholder="姓名" value="{{ member.name }}">
+								</div>
+								<div class="col-sm-2">
+									<select name="gender-{{ forloop.counter0 }}" class="form-control">
+										<option value="male" {% if member.is_male %} selected="selected" {% endif %}>男
+										</option>
+										<option value="female" {% if not member.is_male %} selected="selected"
+											{% endif %}>女
+										</option>
+									</select>
+								</div>
+
+								<div class="col-sm-2">
+									<select name="clothing-size-{{ forloop.counter0 }}" class="form-control">
+										<option value="S" {% if member.clothing_size == 'S' %} selected="selected"
+											{% endif %}>S</option>
+										<option value="M" {% if member.clothing_size == "M" %} selected="selected"
+											{% endif %}>
+											M</option>
+										<option value="L" {% if member.clothing_size == "L" %} selected="selected"
+											{% endif %}>
+											L</option>
+										<option value="XL" {% if member.clothing_size == "XL" %} selected="selected"
+											{% endif %}>
+											XL</option>
+										<option value="XXL" {% if member.clothing_size == "XXL" %} selected="selected"
+											{% endif %}>XXL</option>
+										<option value="XXXL" {% if member.clothing_size == "XXXL" %} selected="selected"
+											{% endif %}>XXXL</option>
+									</select>
+								</div>
+
+								<div class="col-sm-2">
+									<select name="grade-{{ forloop.counter0 }}" class="form-control">
+										<option value="1" {% if member.grade == '1' %} selected="selected" {% endif %}>
+											大一
+										</option>
+										<option value="2" {% if member.grade == "2" %} selected="selected" {% endif %}>
+											大二
+										</option>
+										<option value="3" {% if member.grade == "3" %} selected="selected" {% endif %}>
+											大三
+										</option>
+										<option value="4" {% if member.grade == "4" %} selected="selected" {% endif %}>
+											大四
+										</option>
+										<option value="5" {% if member.grade == "5" %} selected="selected" {% endif %}>
+											研一
+										</option>
+										<option value="6" {% if member.grade == "6" %} selected="selected" {% endif %}>
+											博一
+										</option>
+									</select>
+								</div>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" name="institute-{{ forloop.counter0 }}"
+										placeholder="学院" value="{{ member.institute }}">
+								</div>
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+
+					<div>
+						<button type="button" class="btn btn-info col-sm-4 col-sm-offset-1"
+							style="margin-top: 20px; margin-bottom: 20px;" id="addMemberButton">添加成员</button>
+						<button type="button" class="btn btn-danger col-sm-4 col-sm-offset-2"
+							style="margin-top: 20px;margin-bottom: 20px;" id="clearMemberButton">清空队员</button>
+					</div>
+					<div>
+						<hr class="colorgraph col-xs-12">
+					</div>
+					<input class="btn btn-lg btn-success btn-block" type="submit" value="确认修改">
+				</div>
+			</div>
+		</fieldset>
+	</form>
+</div>
+
+<script>
+	var member_count = {{ members| length }};
+	var max_member_count = {{ max_member }};
+	function addNewMember() {
+		function row_col_sm_2() {
+			var div = document.createElement('div');
+			div.setAttribute('class', 'col-sm-2')
+			return div;
+		}
+
+		function generateOption(value, text) {
+			var tmp = document.createElement('option');
+			tmp.setAttribute('value', value);
+			tmp.appendChild(
+				document.createTextNode(text)
+			);
+			return tmp;
+		}
+
+		function generateInput(type, name, placeholder) {
+			var tmp = document.createElement('input');
+			tmp.setAttribute('type', type);
+			tmp.setAttribute('class', 'form-control');
+			tmp.setAttribute('name', name + member_count);
+			tmp.setAttribute('placeholder', placeholder);
+			return tmp;
+		}
+
+
+		var memberInfo = document.getElementById('member-info');
+		var div = document.createElement('div');
+		//		div.setAttribute('class', 'row');
+		//memberInfo.insertBefore(div, memberInfo.firstChild);
+		memberInfo.appendChild(div);
+
+		var col = row_col_sm_2();
+		col.appendChild(
+			generateInput(
+				'text',
+				'student-id-',
+				'学号')
+		);
+		div.appendChild(col);
+
+
+		var col = row_col_sm_2();
+		col.appendChild(
+			generateInput(
+				'text',
+				'student-name-',
+				'姓名')
+		);
+		div.appendChild(col);
+
+
+		var col = row_col_sm_2();
+		var tmp = document.createElement('select');
+		tmp.setAttribute('class', 'form-control');
+		tmp.setAttribute('name', 'gender-' + member_count);
+		tmp.appendChild(generateOption('male', '男'));
+		tmp.appendChild(generateOption('female', '女'));
+		col.appendChild(tmp);
+		div.appendChild(col);
+
+
+		var col = row_col_sm_2();
+		var tmp = document.createElement('select');
+		tmp.setAttribute('class', 'form-control');
+		tmp.setAttribute('name', 'clothing-size-' + member_count);
+		tmp.appendChild(generateOption('S', 'S'));
+		tmp.appendChild(generateOption('M', 'M'));
+		tmp.appendChild(generateOption('L', 'L'));
+		tmp.appendChild(generateOption('XL', 'XL'));
+		tmp.appendChild(generateOption('XXL', 'XXL'));
+		tmp.appendChild(generateOption('XXXL', 'XXXL'));
+		col.appendChild(tmp);
+		div.appendChild(col);
+
+
+		var col = row_col_sm_2();
+		var tmp = document.createElement('select');
+		tmp.setAttribute('class', 'form-control');
+		tmp.setAttribute('name', 'grade-' + member_count);
+		tmp.appendChild(generateOption('1', '大一'));
+		tmp.appendChild(generateOption('2', '大二'));
+		tmp.appendChild(generateOption('3', '大三'));
+		tmp.appendChild(generateOption('4', '大四'));
+		tmp.appendChild(generateOption('5', '研一'));
+		tmp.appendChild(generateOption('6', '博一'));
+		col.appendChild(tmp);
+		div.appendChild(col);
+
+
+		var col = row_col_sm_2();
+		col.appendChild(
+			generateInput(
+				'text',
+				'institute-',
+				'学院/书院')
+		);
+		div.appendChild(col);
+		member_count++;
+
+		if (member_count >= max_member_count) {
+			$('#addMemberButton').prop('disabled', true);
+		}
+	}
+	$('#addMemberButton').click(
+		function () {
+			$('#alert-member').remove();
+			addNewMember();
+		}
+	)
+
+	$('#clearMemberButton').click(
+		function () {
+			$('#member-info > div').remove();
+			member_count = 0;
+			$('#addMemberButton').prop('disabled', false);
+		}
+	)
+	if (member_count >= max_member_count) {
+		$('#addMemberButton').prop('disabled', true);
+	}
+</script>
+{% endblock content %}
+
+{% block login_field_footer %}
+{% endblock %}
+{% block login_field_header %}
+<li>
+	<a href="{% url 'logout' %}">登出</a>
+</li>
+{% endblock %}
