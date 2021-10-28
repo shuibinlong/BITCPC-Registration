@@ -26,7 +26,7 @@
 								<label for="team-name" class="control-label col-sm-2">队伍名称</label>
 								<div class="col-sm-10">
 									<input type="text" class="form-control col-sm-10" name="team-name"
-										value="{{ team.name }}" maxlength="50" readonly>
+										value="{{ team.name }}" maxlength="50">
 								</div>
 							</div>
 
@@ -73,9 +73,9 @@
 							<div class="form-group">
 								<label class="control-label col-sm-2">参赛校区</label>
 								<div class="col-sm-10">
-									<label class="radio-inline"><input type="radio" name="match-zone" value="ZG"
+									<!-- <label class="radio-inline"><input type="radio" name="match-zone" value="ZG"
 											{% if team.match_zone == "ZG" %} checked {% else %} disabled
-											{% endif %}>中关村校区</label>
+											{% endif %}>中关村校区</label> -->
 									<label class="radio-inline"><input type="radio" name="match-zone" value="LX"
 											{% if team.match_zone == "LX" %} checked {% else %} disabled
 											{% endif %}>良乡校区</label>
@@ -151,13 +151,26 @@
 											研一
 										</option>
 										<option value="6" {% if member.grade == "6" %} selected="selected" {% endif %}>
+											研二
+										</option>
+										<option value="7" {% if member.grade == "7" %} selected="selected" {% endif %}>
 											博一
+										</option>
+										<option value="8" {% if member.grade == "8" %} selected="selected" {% endif %}>
+											博二
+										</option>
+										<option value="9" {% if member.grade == "9" %} selected="selected" {% endif %}>
+											其它
 										</option>
 									</select>
 								</div>
 								<div class="col-sm-2">
-									<input type="text" class="form-control" name="institute-{{ forloop.counter0 }}"
-										placeholder="学院" value="{{ member.institute }}">
+									<select name="institute-{{ forloop.counter0 }}" class="form-control" title="学院/书院">
+										{% for elem in academy %}
+											<option value={{ elem }} {% if member.institute == elem %} selected="selected" {% endif %}>{{ elem }}</option>
+										{% endfor %}
+										<option value=“” disabled>其它</option>
+									</select>
 								</div>
 							</div>
 							{% endfor %}
@@ -190,9 +203,10 @@
 			return div;
 		}
 
-		function generateOption(value, text) {
+		function generateOption(value, text, disabled=false) {
 			var tmp = document.createElement('option');
 			tmp.setAttribute('value', value);
+			tmp.disabled = disabled
 			tmp.appendChild(
 				document.createTextNode(text)
 			);
@@ -268,18 +282,23 @@
 		tmp.appendChild(generateOption('3', '大三'));
 		tmp.appendChild(generateOption('4', '大四'));
 		tmp.appendChild(generateOption('5', '研一'));
-		tmp.appendChild(generateOption('6', '博一'));
+		tmp.appendChild(generateOption('6', '研二'));
+		tmp.appendChild(generateOption('7', '博一'));
+		tmp.appendChild(generateOption('8', '博二'));
+		tmp.appendChild(generateOption('9', '其它', true));
 		col.appendChild(tmp);
 		div.appendChild(col);
 
 
 		var col = row_col_sm_2();
-		col.appendChild(
-			generateInput(
-				'text',
-				'institute-',
-				'学院/书院')
-		);
+		var tmp = document.createElement('select');
+		tmp.setAttribute('class', 'form-control');
+		tmp.setAttribute('name', 'institute-' + member_count);
+		{% for elem in academy %}
+			tmp.appendChild(generateOption('{{ elem }}', '{{ elem }}'));
+		{% endfor %}
+		tmp.appendChild(generateOption('', '其它', true));
+		col.appendChild(tmp);
 		div.appendChild(col);
 		member_count++;
 

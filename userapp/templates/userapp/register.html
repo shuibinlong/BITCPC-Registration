@@ -64,9 +64,9 @@
 							<div class="form-group">
 								<label class="control-label col-sm-2">参赛校区</label>
 								<div class="col-sm-9">
-									<label class="radio-inline"><input type="radio" name="match-zone" value="ZG"
+									<!-- <label class="radio-inline"><input type="radio" name="match-zone" value="ZG"
 											checked>中关村校区
-										({{ team_number_zg }}/{{ setting.team_limited_Zhongguancun }})</label>
+										({{ team_number_zg }}/{{ setting.team_limited_Zhongguancun }})</label> -->
 									<label class="radio-inline"><input type="radio" name="match-zone" value="LX">良乡校区
 										({{ team_number_lx }}/{{ setting.team_limited_Liangxiang }})</label>
 								</div>
@@ -105,18 +105,27 @@
 								<input type="text" class="form-control" name="student-statue-0" placeholder="身高">
 							</div>
 							<div class="col-sm-2">
-								<select name="grade-0" class="form-control">
+								<select name="grade-0" class="form-control" title="年级">
 									<option value="1">大一</option>
 									<option value="2">大二</option>
 									<option value="3">大三</option>
 									<option value="4">大四</option>
 									<option value="5">研一</option>
-									<option value="6">博一</option>
+									<option value="6">研二</option>
+									<option value="7">博一</option>
+									<option value="8">博二</option>
+									<option value="9" disabled>其它</option>
 								</select>
 							</div>
 
 							<div class="col-sm-2">
-								<input type="text" class="form-control" name="institute-0" placeholder="学院">
+								<!-- <input type="text" class="form-control" name="institute-0" placeholder="学院"> -->
+								<select name="institute-0" class="form-control" title="学院/书院">
+									{% for elem in academy %}
+										<option value={{ elem }}>{{ elem }}</option>
+									{% endfor %}
+									<option value=“” disabled>其它</option>
+								</select>
 							</div>{% endcomment %}
 						</div>
 
@@ -167,9 +176,10 @@
 			return div;
 		}
 
-		function generateOption(value, text) {
+		function generateOption(value, text, disabled=false) {
 			var tmp = document.createElement('option');
 			tmp.setAttribute('value', value);
+			tmp.disabled = disabled
 			tmp.appendChild(
 				document.createTextNode(text)
 			);
@@ -245,18 +255,23 @@
 		tmp.appendChild(generateOption('3', '大三'));
 		tmp.appendChild(generateOption('4', '大四'));
 		tmp.appendChild(generateOption('5', '研一'));
-		tmp.appendChild(generateOption('6', '博一'));
+		tmp.appendChild(generateOption('6', '研二'));
+		tmp.appendChild(generateOption('7', '博一'));
+		tmp.appendChild(generateOption('8', '博二'));
+		tmp.appendChild(generateOption('9', '其它', true));
 		col.appendChild(tmp);
 		div.appendChild(col);
 
 
 		var col = row_col_sm_2();
-		col.appendChild(
-			generateInput(
-				'text',
-				'institute-',
-				'书院/学院')
-		);
+		var tmp = document.createElement('select');
+		tmp.setAttribute('class', 'form-control');
+		tmp.setAttribute('name', 'institute-' + member_count);
+		{% for elem in academy %}
+			tmp.appendChild(generateOption('{{ elem }}', '{{ elem }}'));
+		{% endfor %}
+		tmp.appendChild(generateOption('', '其它', true));
+		col.appendChild(tmp);
 		div.appendChild(col);
 		member_count++;
 

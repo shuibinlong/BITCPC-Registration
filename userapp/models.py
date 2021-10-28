@@ -21,7 +21,7 @@ class Person(models.Model):
     )
     clothing_size = models.CharField('衣服尺码', max_length=4, choices=CLOTHING_SIZE)
     is_male = models.BooleanField('性别')
-    grade = models.CharField('年级，1-4分别表示大一至大四，5为研一，6为博一', max_length=5)
+    grade = models.CharField('年级，1-4分别表示大一至大四，5-6为研一至研二，7-8为博一至博二，9为其它', max_length=5)
     institute = models.CharField('学院', max_length=10)
     team_belongto = models.ForeignKey('userapp.Team', on_delete=models.CASCADE, null=False)
 

@@ -26,7 +26,7 @@ def team_number_zg(): return len(Team.objects.filter(match_zone='ZG'))
 
 
 def team_number_single(): return len(
-    [x for x in Team.objects.all() if x.is_new_student_team()])
+    [x for x in Team.objects.all() if x.is_single_student_team()])
 
 
 def calc_email(email):
@@ -66,6 +66,7 @@ def register(request):
         'setting': Setting.objects.get(pk=1),
         'team_number_lx': team_number_lx(),
         'team_number_zg': team_number_zg(),
+        'academy': ['精工书院', '睿信书院', '求是书院', '明德书院', '经管书院', '知艺书院', '特立书院', '北京书院', '令闻书院', '徐特立学院', '宇航学院', '机电学院', '机械与车辆学院', '光电学院', '信息与电子学院', '自动化学院', '计算机学院', '网络空间安全学院', '材料学院', '化学与化工学院', '生命学院', '数学与统计学院', '物理学院', '管理与经济学院', '人文社会科学学院', '法学院', '外国语学院', '设计与艺术学院']
     }
     if request.method == 'GET':
         if request.user.is_authenticated:
@@ -88,8 +89,7 @@ def register(request):
             return HttpResponse('存在字段为空，注册失败。')
 
         member_info = []
-        Member = namedtuple(
-            'Member', ['id', 'name', 'gender', 'clothing_size', 'grade', 'institute'])
+        Member = namedtuple('Member', ['id', 'name', 'gender', 'clothing_size', 'grade', 'institute'])
         for index in range(MEMBER_LIMIT):
             student_id = request.POST.get('student-id-' + str(index), '')
             student_name = request.POST.get('student-name-' + str(index), '')
@@ -99,26 +99,25 @@ def register(request):
             institute = request.POST.get('institute-' + str(index), '')
             if Person.objects.filter(student_id=student_id):
                 return render(request, 'userapp/message.html', {'message': '学生重复报名。', 'redirect_url': reverse_lazy('register')})
-            member_info.append(Member(
-                student_id, student_name, student_gender, clothing_size, student_grade, institute))
+            if student_id:
+                member_info.append(Member(student_id, student_name, student_gender, clothing_size, student_grade, institute))
         if not member_info[0].id:
             return HttpResponse('未添加队员信息。')
 
         context = {}
         user = None
         with transaction.atomic():
-
             # check team requirements
             team_limit_lx = Setting.objects.get(pk=1).team_limited_Liangxiang
             team_limit_zg = Setting.objects.get(pk=1).team_limited_Zhongguancun
             team_limit_single = Setting.objects.get(
                 pk=1).single_person_team_limited
 
-            if team_number_lx() > team_limit_lx:
+            if match_zone == 'LX' and team_number_lx() >= team_limit_lx:
                 return render(request, 'userapp/message.html', {'message': '良乡队伍已满。', 'redirect_url': reverse_lazy('register')})
-            if team_number_zg() > team_limit_zg:
+            if match_zone == 'Z' and team_number_zg() >= team_limit_zg:
                 return render(request, 'userapp/message.html', {'message': '中关村队伍已满。', 'redirect_url': reverse_lazy('register')})
-            if team_number_single() > team_limit_single:
+            if len(member_info) == 1 and team_number_single() >= team_limit_single:
                 return render(request, 'userapp/message.html', {'message': '单人队伍已满。', 'redirect_url': reverse_lazy('register')})
 
             team_id = 'L' if match_zone == 'LX' else 'Z'
@@ -139,11 +138,10 @@ def register(request):
             team = Team.objects.create(name=team_name, email=captain_email,
                                        phone_number=captain_phone, user=user, match_zone=match_zone, team_id=team_id)
             for member in member_info:
-                if member.id:
-                    Person.objects.create(name=member.name, student_id=member.id, clothing_size=member.clothing_size,
-                                          is_male=True if member.gender == 'male' else False,
-                                          grade=member.grade, institute=member.institute,
-                                          team_belongto=team)
+                Person.objects.create(name=member.name, student_id=member.id, clothing_size=member.clothing_size,
+                                        is_male=True if member.gender == 'male' else False,
+                                        grade=member.grade, institute=member.institute,
+                                        team_belongto=team)
 
             context = {
                 'message': '注册成功, 你的队伍ID是 "' + team_id + '" 。',
@@ -197,6 +195,7 @@ def team_get(request):
             'team': team,
             'members': members,
             'max_member': MEMBER_LIMIT,
+            'academy': ['精工书院', '睿信书院', '求是书院', '明德书院', '经管书院', '知艺书院', '特立书院', '北京书院', '令闻书院', '徐特立学院', '宇航学院', '机电学院', '机械与车辆学院', '光电学院', '信息与电子学院', '自动化学院', '计算机学院', '网络空间安全学院', '材料学院', '化学与化工学院', '生命学院', '数学与统计学院', '物理学院', '管理与经济学院', '人文社会科学学院', '法学院', '外国语学院', '设计与艺术学院']
         }
         return render(request, 'userapp/team.html', context)
 

@@ -20,7 +20,10 @@ def export(request):
         '3': '大三',
         '4': '大四',
         '5': '研一',
-        '6': '博一',
+        '6': '研二',
+        '7': '博一',
+        '8': '博二',
+        '9': '其它',
     }
     response = HttpResponse(content_type='text/csv', charset="gbk")
     response['Content-Disposition'] = 'attachment; filename="team.csv"'
